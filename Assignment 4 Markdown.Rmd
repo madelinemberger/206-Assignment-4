@@ -30,12 +30,19 @@ lobster_traps <- read_csv("lobster_traps.csv")
 The lobster_size file needs to be converted to tidyverse format
 
 ```{r}
+
+#convert data to tidyverse
 lobster_size1 <- as.data.frame(lobster_size)
 lobster_size2 <- expand.dft(lobster_size1, freq = "COUNT") %>% 
   select(YEAR, SITE, SIZE)
 
 lobster_traps1 <- as.data.frame(lobster_traps)
 lobster_traps2 <- expand.dft(lobster_traps, freq = "TRAPS")
+```
+
+```{r}
+
+#Data wrangling into tables and exploratory graphs
 
 lobster_traps_clean <- lobster_traps %>% 
   select(YEAR, MONTH, SITE, TRAPS) %>% 
@@ -63,16 +70,10 @@ trap_plot
   
 ```
 
-Data wrangling:
-
-
-1.Lobster abundance and fishing pressure (2012 - 2017) Describe trends in lobster abundance (counts) and fishing pressure (trap buoys) at the five locations from 2012 - 2017. 
-
-
-Ideas: side by side column graphs 
 
 ```{r}
 
+#merge cleaned size and abundance data, graph by site
 together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR")) %>% 
   ggplot(aes(x=traps, y=abundance)) +
   geom_col(aes(fill=SITE))+
@@ -82,7 +83,7 @@ together
 
 ```
 
-Bar graph
+
 
 ```{r}
 
