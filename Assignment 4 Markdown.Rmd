@@ -31,7 +31,8 @@ The lobster_size file needs to be converted to tidyverse format
 
 ```{r}
 lobster_size1 <- as.data.frame(lobster_size)
-lobster_size2 <- expand.dft(lobster_size1, freq = "COUNT")
+lobster_size2 <- expand.dft(lobster_size1, freq = "COUNT") %>% 
+  select(YEAR, SITE, SIZE)
 
 lobster_traps1 <- as.data.frame(lobster_traps)
 lobster_traps2 <- expand.dft(lobster_traps, freq = "TRAPS")
@@ -39,7 +40,14 @@ lobster_traps2 <- expand.dft(lobster_traps, freq = "TRAPS")
 lobster_traps_clean <- lobster_traps %>% 
   select(YEAR, MONTH, SITE, TRAPS) %>% 
   count(SITE, YEAR) %>% 
-  spread(YEAR, n) 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>% 
+  rename(traps = "n")
+
+lobster_abundance <- lobster_size %>% 
+  select(YEAR, MONTH, SITE, COUNT) %>% 
+  count(SITE, YEAR) %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>% 
+  rename(abundance = "n")
 
 
 trap_plot <- lobster_traps %>% 
@@ -62,3 +70,22 @@ Data wrangling:
 
 
 Ideas: side by side column graphs 
+
+```{r}
+
+together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR")) %>% 
+  ggplot(aes(x=traps, y=abundance)) +
+  geom_col(aes(fill=SITE))+
+  facet_wrap(~SITE, scale = "free")
+
+together
+
+```
+
+Bar graph
+
+```{r}
+
+
+```
+
