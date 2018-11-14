@@ -37,7 +37,21 @@ lobster_traps1 <- as.data.frame(lobster_traps)
 lobster_traps2 <- expand.dft(lobster_traps, freq = "TRAPS")
 
 lobster_traps_clean <- lobster_traps %>% 
-  select(-NOTES)
+  select(YEAR, MONTH, SITE, TRAPS) %>% 
+  count(SITE, YEAR) %>% 
+  spread(YEAR, n) 
+
+trap_plot <- lobster_traps %>% 
+  select(YEAR, MONTH, SITE, TRAPS) %>% 
+  filter(SITE== "CARP", SITE== "MOHK", SITE== "AQUE", SITE== "NAPL", SITE== "IVEE") %>% 
+  count(SITE, YEAR) %>% 
+  ggplot(aes(x = YEAR, y = n)) +
+  geom_line(aes(color=SITE)) +
+  theme_classic()
+
+quartz()
+trap_plot
+  
 ```
 
 Data wrangling:
