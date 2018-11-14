@@ -1,0 +1,46 @@
+---
+title: "Assignment 4"
+author: "Madeline Berger"
+date: "11/12/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#load necessary packages 
+
+library(tidyverse)
+library(vcdExtra)
+library(kableExtra)
+library(RColorBrewer)
+library(car)
+library(effsize)
+```
+
+Read in the CSVs
+
+```{r}
+
+
+lobster_size <- read_csv("lobster_size_abundance.csv")
+lobster_traps <- read_csv("lobster_traps.csv")
+```
+
+The lobster_size file needs to be converted to tidyverse format
+
+```{r}
+lobster_size1 <- as.data.frame(lobster_size)
+lobster_size2 <- expand.dft(lobster_size1, freq = "COUNT")
+
+lobster_traps1 <- as.data.frame(lobster_traps)
+lobster_traps2 <- expand.dft(lobster_traps, freq = "TRAPS")
+```
+
+Data wrangling:
+
+
+1.Lobster abundance and fishing pressure (2012 - 2017) Describe trends in lobster abundance (counts) and fishing pressure (trap buoys) at the five locations from 2012 - 2017. 
+
+
+Ideas: side by side column graphs 
