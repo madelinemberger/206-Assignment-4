@@ -41,15 +41,16 @@ lobster_traps_clean <- lobster_traps %>%
   count(SITE, YEAR) %>% 
   spread(YEAR, n) 
 
+
 trap_plot <- lobster_traps %>% 
   select(YEAR, MONTH, SITE, TRAPS) %>% 
-  filter(SITE== "CARP", SITE== "MOHK", SITE== "AQUE", SITE== "NAPL", SITE== "IVEE") %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>% 
   count(SITE, YEAR) %>% 
   ggplot(aes(x = YEAR, y = n)) +
   geom_line(aes(color=SITE)) +
   theme_classic()
 
-quartz()
+
 trap_plot
   
 ```
