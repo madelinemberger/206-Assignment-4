@@ -35,6 +35,9 @@ lobster_size2 <- expand.dft(lobster_size1, freq = "COUNT")
 
 lobster_traps1 <- as.data.frame(lobster_traps)
 lobster_traps2 <- expand.dft(lobster_traps, freq = "TRAPS")
+
+lobster_traps_clean <- lobster_traps %>% 
+  select(-NOTES)
 ```
 
 Data wrangling:
