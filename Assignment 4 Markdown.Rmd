@@ -51,6 +51,14 @@ lobster_traps_clean <- lobster_traps %>%
   filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>% 
   rename(traps = "n")
 
+traps_summary <- lobster_traps %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>%
+  select(YEAR, MONTH, SITE, TRAPS) %>%
+  group_by(SITE,YEAR) %>% 
+  summarize(
+    traps = sum(TRAPS)
+  )
+
 lobster_abundance <- lobster_size %>% 
   select(YEAR, MONTH, SITE, COUNT) %>% 
   count(SITE, YEAR) %>% 
@@ -84,7 +92,7 @@ together
 
 
 #made a different merge for the graph - this way makes sure no data is lost 
-size_traps <- full_join(lobster_traps_clean, lobster_abundance)
+size_traps <- full_join(traps_summary, lobster_abundance)
 
 #use new merged data to make side by side line graphs 
 size_traps_graph <- ggplot(size_traps, aes(YEAR))+
@@ -174,7 +182,9 @@ nonmpas_2017 <- lobster_size2 %>%
   mutate(i = row_number()) %>% 
   spread(SITE,SIZE) %>% 
   select(-i)
+```
 
+```{r}
 #First Location: IV MPA
 #Test variances to determine what kind of t.test we can use
 
