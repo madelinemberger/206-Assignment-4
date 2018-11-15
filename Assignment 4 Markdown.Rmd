@@ -82,8 +82,11 @@ together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR"))
 
 together
 
+
+#made a different merge for the graph - this way makes sure no data is lost 
 size_traps <- full_join(lobster_traps_clean, lobster_abundance)
 
+#use new merged data to make side by side line graphs 
 size_traps_graph <- ggplot(size_traps, aes(YEAR))+
   geom_line(aes(y=traps, color="traps"))+
   geom_line(aes(y=abundance, color="abundance"))+
@@ -91,6 +94,8 @@ size_traps_graph <- ggplot(size_traps, aes(YEAR))+
 
 size_traps_graph
 
+
+#we should write a statement about what this shows 
 ```
 
 2. ANOVA
@@ -141,7 +146,7 @@ lob_ANOVA
 #3: Comparing MPAs v non MPAs between 2012 and 2017 
 
 
-#create data frames separating MPA sites and nonMPA sites, aggregate size average by year 
+#create data frames separating MPA sites and nonMPA sites
 
 class(lobster_size2$SIZE)
 
@@ -181,6 +186,16 @@ ftest_iv
 ttest_iv <- t.test(mpas_2012$IVEE,mpas_2017$IVEE, var.equal = TRUE)
 ttest_iv
 
+#Siglevel = 0.05, no significant difference 
+
+#calculate effect size using Cohen's D
+
+effsize_iv <- cohen.d(mpas_2012$IVEE,mpas_2017$IVEE)
+effsize_iv
+
+```
+
+```{r}
 #Second Location: Naples MPA
 #Test Variances
 
@@ -191,6 +206,14 @@ ftest_naples
 ttest_naples <- t.test(mpas_2012$NAPL,mpas_2017$NAPL, var.equal = TRUE)
 ttest_naples
 
+#No significant difference
+#Cohen's d for effect size
+effsize_naples <- cohen.d(mpas_2017$NAPL,mpas_2012$NAPL)
+effsize_naples
+
+```
+
+```{r}
 #Third Location: Carpinteria Non-MPA
 #F test
 
@@ -202,7 +225,9 @@ ttest_carp <- t.test(nonmpas_2012$CARP,nonmpas_2017$CARP, var.equal = TRUE)
 ttest_carp
 
 
+```
 
+```{r}
 #Fourth Location: Arroyo Quemado 
 #F Test
 
@@ -215,7 +240,9 @@ ttest_aque <- t.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE, var.equal = TRUE)
 ttest_aque
 
 
+```
 
+```{r}
 #Fifth Location: Mohawk Reef
 #FTest
 
