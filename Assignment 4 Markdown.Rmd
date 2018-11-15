@@ -84,6 +84,143 @@ together
 
 ```
 
+2. ANOVA
+
+```{r}
+
+# Compare mean lobster sizes (mm) across five sites for lobster observations collected in 2017
+
+lobster_levene <- leveneTest(SIZE ~ SITE, data = lobster_size2)
+
+lobster_levene
+
+# Variances are not equal
+
+# Can still assume equal variance because largest sample variance is <4x the smallest sample variance, so the variances are close enough (lecture 9)
+
+# ANOVA test for parametric data
+
+# H0: Mean lobster size at the five sites are equal
+# HA: At least two means differ significantly
+
+lobster_aov <- aov(SIZE ~ SITE, data = lobster_size2)
+
+summary(lobster_aov)
+
+# At least two samples were taken from populations with different means. Which ones are different? All three different from each other? Or something else?
+
+lob_ph<- TukeyHSD(lobster_aov)
+
+lob_ph
+
+lob_ANOVA <- ggplot(lobster_size2, aes(x = SITE, y = SIZE)) +
+  geom_boxplot(fill = "gray", color = "blue") +
+  xlab("Site") +
+  ylab("Size") +
+  theme_bw()
+ 
+
+lob_ANOVA
+
+```
+
+
+
+3. Differences in lobster size between MPAs and nonMPAS in 2012 and 2017  
+
+```{r}
+#3: Comparing MPAs v non MPAs between 2012 and 2017 
+
+#Question: am I comparing averages? using together table v lobster_size2 because right now we have counts for the whole year
+
+#create data frames separating MPA sites and nonMPA sites, aggregate size average by year 
+
+class(lobster_size2$SIZE)
+
+mpas_2012 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2012") %>% 
+  mutate(i = row_number()) %>% 
+  spread(SITE,SIZE) %>% 
+  select(-i)
+
+
+nonmpas_2012 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK", YEAR == "2012") %>% 
+  mutate(i = row_number()) %>% 
+  spread(SITE,SIZE) %>% 
+  select(-i)
+ 
+mpas_2017 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2017") %>% 
+  mutate(i = row_number()) %>% 
+  spread(SITE,SIZE) %>% 
+  select(-i)
+
+nonmpas_2017 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK", YEAR == "2017") %>% 
+  mutate(i = row_number()) %>% 
+  spread(SITE,SIZE) %>% 
+  select(-i)
+
+#First Location: IV MPA
+#Test variances to determine what kind of t.test we can use
+
+ftest_iv <- var.test(mpas_2012$IVEE,mpas_2017$IVEE)
+ftest_iv
+
+#Variances equal, use Student's T Test
+
+ttest_iv <- t.test(mpas_2012$IVEE,mpas_2017$IVEE, var.equal = TRUE)
+ttest_iv
+
+#Second Location: Naples MPA
+#Test Variances
+
+ftest_naples <- var.test(mpas_2012$NAPL,mpas_2017$NAPL)
+ftest_naples
+
+#Use students T test
+ttest_naples <- t.test(mpas_2012$NAPL,mpas_2017$NAPL, var.equal = TRUE)
+ttest_naples
+
+#Third Location: Carpinteria Non-MPA
+#F test
+
+ftest_carp <- var.test(nonmpas_2012$CARP,nonmpas_2017$CARP)
+ftest_carp
+
+#Use students T test
+ttest_carp <- t.test(nonmpas_2012$CARP,nonmpas_2017$CARP, var.equal = TRUE)
+ttest_carp
+
+
+
+#Fourth Location: Arroyo Quemado 
+#F Test
+
+ftest_aque <- var.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE)
+ftest_aque
+
+#Use students T test
+
+ttest_aque <- t.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE, var.equal = TRUE)
+ttest_aque
+
+
+
+#Fifth Location: Mohawk Reef
+#FTest
+
+ftest_mohk <- var.test(nonmpas_2012$MOHK,nonmpas_2017$MOHK)
+ftest_mohk
+
+#Use students T Test
+
+ttest_mohk <- t.test(nonmpas_2012$MOHK,nonmpas_2017$MOHK, var.equal = TRUE)
+ttest_mohk
+
+
+```
 
 4. Proportions of legal lobsters
 ```{r}
@@ -99,6 +236,9 @@ carapace <- lobster_size %>%
 rownames(carapace) <- c("AQUE", "CARP", "IVEE", "MOHK", "NAPL")
 
 ```
+
+
+
 
 Proprtions of legal groups and table of them:
 
