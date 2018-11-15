@@ -182,6 +182,9 @@ ttest_mohk
 
 ```
 
+
+
+
 4. Proportions of legal lobsters
 ```{r}
 
