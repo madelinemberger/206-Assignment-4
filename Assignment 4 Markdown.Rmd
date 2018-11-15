@@ -82,6 +82,15 @@ together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR"))
 
 together
 
+size_traps <- full_join(lobster_traps_clean, lobster_abundance)
+
+size_traps_graph <- ggplot(size_traps, aes(YEAR))+
+  geom_line(aes(y=traps, color="traps"))+
+  geom_line(aes(y=abundance, color="abundance"))+
+  facet_wrap(~SITE)
+
+size_traps_graph
+
 ```
 
 2. ANOVA
@@ -131,7 +140,6 @@ lob_ANOVA
 ```{r}
 #3: Comparing MPAs v non MPAs between 2012 and 2017 
 
-#Question: am I comparing averages? using together table v lobster_size2 because right now we have counts for the whole year
 
 #create data frames separating MPA sites and nonMPA sites, aggregate size average by year 
 
@@ -219,7 +227,9 @@ ftest_mohk
 ttest_mohk <- t.test(nonmpas_2012$MOHK,nonmpas_2017$MOHK, var.equal = TRUE)
 ttest_mohk
 
+#Only IV and Mohawk Reef showed a significant difference in lobster size between 2012 and 2017. 
 
+#make table with site rows, each year, traps 
 ```
 
 
