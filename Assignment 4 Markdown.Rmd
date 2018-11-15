@@ -16,6 +16,7 @@ library(kableExtra)
 library(RColorBrewer)
 library(car)
 library(effsize)
+library(kableExtra)
 ```
 
 Read in the CSVs
@@ -84,9 +85,38 @@ together
 ```
 
 
-
+4. Proportions of legal lobsters
 ```{r}
 
+carapace <- lobster_size %>% 
+  filter(SIZE != "-99999") %>% 
+  select(SITE, SIZE) %>% 
+  mutate(Legality = ifelse(SIZE >= 86, "Legal", "Illegal")) %>% 
+  count(SITE, Legality) %>% 
+  spread(Legality, n) %>% 
+  select(-SITE)
+
+rownames(carapace) <- c("AQUE", "CARP", "IVEE", "MOHK", "NAPL")
 
 ```
 
+Proprtions of legal groups and table of them:
+
+```{r}
+carapace_prop <- prop.table(as.matrix(carapace), 1)
+
+carapace_prop
+
+kable(carapace_prop, col.names = c("Illegal","Legal")) %>% 
+  kable_styling(bootstrap_options = "striped", full_width = F)
+```
+
+Chi-square test
+
+```{r}
+carapace_x2 <- chisq.test(carapace)
+carapace_x2
+
+# X2 = 39.011, df = 4, p value = 6.931e-08
+```
+The proportion of observed lobsters that were above the legal minimum differed signficantly across all sites ($\chi^2$(`r carapace_x2$parameter`) = `r round(carapace_x2$statistic, 2)`, p value < 0.001).
