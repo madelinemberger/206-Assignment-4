@@ -84,6 +84,46 @@ together
 
 ```
 
+2. ANOVA
+
+```{r}
+
+# Compare mean lobster sizes (mm) across five sites for lobster observations collected in 2017
+
+lobster_levene <- leveneTest(SIZE ~ SITE, data = lobster_size2)
+
+lobster_levene
+
+# Variances are not equal
+
+# Can still assume equal variance because largest sample variance is <4x the smallest sample variance, so the variances are close enough (lecture 9)
+
+# ANOVA test for parametric data
+
+# H0: Mean lobster size at the five sites are equal
+# HA: At least two means differ significantly
+
+lobster_aov <- aov(SIZE ~ SITE, data = lobster_size2)
+
+summary(lobster_aov)
+
+# At least two samples were taken from populations with different means. Which ones are different? All three different from each other? Or something else?
+
+lob_ph<- TukeyHSD(lobster_aov)
+
+lob_ph
+
+lob_ANOVA <- ggplot(lobster_size2, aes(x = SITE, y = SIZE)) +
+  geom_boxplot(fill = "gray", color = "blue") +
+  xlab("Site") +
+  ylab("Size") +
+  theme_bw()
+ 
+
+lob_ANOVA
+
+```
+
 
 
 3. Differences in lobster size between MPAs and nonMPAS in 2012 and 2017  
