@@ -103,12 +103,16 @@ rownames(carapace) <- c("AQUE", "CARP", "IVEE", "MOHK", "NAPL")
 Proprtions of legal groups and table of them:
 
 ```{r}
-carapace_prop <- prop.table(as.matrix(carapace), 1)
+carapace_prop <- prop.table(as.matrix(carapace), 1) %>% 
+  round(2)
 
 carapace_prop
 
-kable(carapace_prop, col.names = c("Illegal","Legal")) %>% 
+carapace_prop_table <- kable(carapace_prop, col.names = c("Illegal","Legal"), align = "c") %>% 
   kable_styling(bootstrap_options = "striped", full_width = F)
+
+carapace_prop_table
+
 ```
 
 Chi-square test
