@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4"
-author: "Madeline Berger"
+author: "Madeline Berger, Sandro Lallas, AnnaClaire Marley"
 date: "11/12/2018"
 output: html_document
 ---
@@ -104,6 +104,7 @@ size_traps_graph
 
 
 #we should write a statement about what this shows 
+#aparently we are also supposed to break these out 
 ```
 
 2. ANOVA
@@ -184,6 +185,93 @@ nonmpas_2017 <- lobster_size2 %>%
   select(-i)
 ```
 
+
+```{r}
+#create exploratory graphs 
+
+#MPAs, 2012 
+hist_mpa2012 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2012") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 5)+
+  facet_wrap(~SITE)
+
+hist_mpa2012
+ 
+
+qq_mpa2012 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2012") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+
+qq_mpa2012
+
+#IV does not look normally distributed in 2012
+#MPAS 2017
+
+hist_mpa2017 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2017") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 5)+
+  facet_wrap(~SITE)
+
+hist_mpa2017
+ 
+
+qq_mpa2017 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2017") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+
+qq_mpa2017
+
+
+#nonMPAS, 2012
+
+hist_nonmpa2012 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2012") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 10)+
+  facet_wrap(~SITE)
+
+hist_nonmpa2012
+
+
+qq_nonmpa2012 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2012") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+qq_nonmpa2012
+
+#nonMPAS2017
+
+
+hist_nonmpa2017 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2017") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 10)+
+  facet_wrap(~SITE)
+
+hist_nonmpa2017
+
+
+qq_nonmpa2017 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2017") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+
+qq_nonmpa2017
+
+```
+
+
+
+
+
 ```{r}
 #First Location: IV MPA
 #Test variances to determine what kind of t.test we can use
@@ -202,6 +290,9 @@ ttest_iv
 
 effsize_iv <- cohen.d(mpas_2012$IVEE,mpas_2017$IVEE)
 effsize_iv
+
+
+#Experiment: try Mann Whitney U since data did not appear normal
 
 ```
 
