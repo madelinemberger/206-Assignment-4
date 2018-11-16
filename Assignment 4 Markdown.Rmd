@@ -380,7 +380,8 @@ effsize_iv
 
 #Experiment: try Mann Whitney U since data did not appear normal
 
-
+manu_iv <- wilcox.test(mpas_2012$IVEE,mpas_2017$IVEE)
+manu_iv
 
 ```
 
@@ -436,6 +437,10 @@ ttest_aque
 #Cohen's d for effect size
 effsize_aque <- cohen.d(aque2012,aque2017)
 effsize_aque
+
+#Mann Whitney U
+manu_aque <- wilcox.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE)
+manu_aque
 
 ```
 
