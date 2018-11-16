@@ -91,6 +91,31 @@ together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR"))
 together
 
 
+# lobster traps across sites
+trap_plot <- lobster_traps %>% 
+  select(YEAR, MONTH, SITE, TRAPS) %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>% 
+  count(SITE, YEAR) %>% 
+  ggplot(aes(x = YEAR, y = n)) +
+  geom_line(aes(color=SITE)) +
+  theme_classic()
+
+
+trap_plot
+
+# lobster abundance across sites
+abundance_plot <- lobster_size %>% 
+  select(YEAR, MONTH, SITE, COUNT) %>% 
+  count(SITE, YEAR) %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>% 
+  rename(abundance = "n") %>% 
+  ggplot(aes(x = YEAR, y = abundance)) +
+  geom_line(aes(color=SITE)) +
+  theme_classic()
+
+abundance_plot
+
+
 #made a different merge for the graph - this way makes sure no data is lost 
 size_traps <- full_join(traps_summary, lobster_abundance)
 
