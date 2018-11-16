@@ -106,6 +106,7 @@ trap_plot <- lobster_traps %>%
   )
 
 quartz()
+
 trap_plot
 
 # lobster abundance across sites
