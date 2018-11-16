@@ -476,6 +476,7 @@ size_summary_table <- lobster_size2 %>%
   mutate(i = row_number()) %>% 
   spread(YEAR,avg) %>% 
   select(-i)
+  mutate(Difference =  )
   
   
 size_summary_table
