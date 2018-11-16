@@ -21,7 +21,7 @@ library(kableExtra)
 
 Read in the CSVs
 
-```{r}
+```{r, echo=FALSE}
 
 
 lobster_size <- read_csv("lobster_size_abundance.csv")
@@ -30,7 +30,7 @@ lobster_traps <- read_csv("lobster_traps.csv")
 
 The lobster_size file needs to be converted to tidyverse format
 
-```{r}
+```{r, echo=FALSE}
 
 #convert data to tidyverse
 lobster_size1 <- as.data.frame(lobster_size)
@@ -41,7 +41,7 @@ lobster_traps1 <- as.data.frame(lobster_traps)
 lobster_traps2 <- expand.dft(lobster_traps, freq = "TRAPS")
 ```
 
-```{r}
+```{r, echo=FALSE}
 
 #Data wrangling into tables and exploratory graphs
 
@@ -80,7 +80,7 @@ trap_plot
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 
 #merge cleaned size and abundance data, graph by site
 together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR")) %>% 
@@ -105,7 +105,7 @@ trap_plot <- lobster_traps %>%
     y = "Number of Traps"
   )
 
-
+quartz()
 trap_plot
 
 # lobster abundance across sites
@@ -135,6 +135,7 @@ size_traps_graph <- ggplot(size_traps, aes(YEAR))+
   geom_line(aes(y=abundance, color="abundance"))+
   facet_wrap(~SITE)
 
+
 size_traps_graph
 
 
@@ -144,7 +145,7 @@ size_traps_graph
 
 2. ANOVA
 
-```{r}
+```{r, echo=FALSE}
 
 # Compare mean lobster sizes (mm) across five sites for lobster observations collected in 2017
 
@@ -186,7 +187,7 @@ lob_ANOVA
 
 3. Differences in lobster size between MPAs and nonMPAS in 2012 and 2017  
 
-```{r}
+```{r, echo=FALSE}
 #3: Comparing MPAs v non MPAs between 2012 and 2017 
 
 
@@ -221,7 +222,7 @@ nonmpas_2017 <- lobster_size2 %>%
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 #create exploratory graphs 
 
 #MPAs, 2012 
@@ -307,7 +308,7 @@ qq_nonmpa2017
 
 
 
-```{r}
+```{r, echo=FALSE}
 #First Location: IV MPA
 #Test variances to determine what kind of t.test we can use
 
@@ -331,7 +332,7 @@ effsize_iv
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 #Second Location: Naples MPA
 #Test Variances
 
@@ -349,7 +350,7 @@ effsize_naples
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 #Third Location: Carpinteria Non-MPA
 #F test
 
@@ -363,7 +364,7 @@ ttest_carp
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 #Fourth Location: Arroyo Quemado 
 #F Test
 
@@ -378,7 +379,7 @@ ttest_aque
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 #Fifth Location: Mohawk Reef
 #FTest
 
@@ -399,7 +400,7 @@ ttest_mohk
 
 
 4. Proportions of legal lobsters
-```{r}
+```{r, echo=FALSE}
 
 carapace <- lobster_size %>% 
   filter(SIZE != "-99999") %>% 
@@ -418,7 +419,7 @@ rownames(carapace) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk",
 
 Proprtions of legal groups and table of them:
 
-```{r}
+```{r, echo=FALSE}
 carapace_prop <- prop.table(as.matrix(carapace), 1) %>% 
   round(2)
 
@@ -433,7 +434,7 @@ carapace_prop_table
 
 Chi-square test
 
-```{r}
+```{r, echo=FALSE}
 carapace_x2 <- chisq.test(carapace)
 carapace_x2
 
