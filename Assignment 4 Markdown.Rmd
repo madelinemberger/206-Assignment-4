@@ -1,6 +1,6 @@
 ---
 title: "Assignment 4"
-author: "Madeline Berger"
+author: "Madeline Berger, Sandro Lallas, AnnaClaire Marley"
 date: "11/12/2018"
 output: html_document
 ---
@@ -51,6 +51,14 @@ lobster_traps_clean <- lobster_traps %>%
   filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>% 
   rename(traps = "n")
 
+traps_summary <- lobster_traps %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE") %>%
+  select(YEAR, MONTH, SITE, TRAPS) %>%
+  group_by(SITE,YEAR) %>% 
+  summarize(
+    traps = sum(TRAPS)
+  )
+
 lobster_abundance <- lobster_size %>% 
   select(YEAR, MONTH, SITE, COUNT) %>% 
   count(SITE, YEAR) %>% 
@@ -82,6 +90,21 @@ together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR"))
 
 together
 
+
+#made a different merge for the graph - this way makes sure no data is lost 
+size_traps <- full_join(traps_summary, lobster_abundance)
+
+#use new merged data to make side by side line graphs 
+size_traps_graph <- ggplot(size_traps, aes(YEAR))+
+  geom_line(aes(y=traps, color="traps"))+
+  geom_line(aes(y=abundance, color="abundance"))+
+  facet_wrap(~SITE)
+
+size_traps_graph
+
+
+#we should write a statement about what this shows 
+#aparently we are also supposed to break these out 
 ```
 
 2. ANOVA
@@ -131,9 +154,8 @@ lob_ANOVA
 ```{r}
 #3: Comparing MPAs v non MPAs between 2012 and 2017 
 
-#Question: am I comparing averages? using together table v lobster_size2 because right now we have counts for the whole year
 
-#create data frames separating MPA sites and nonMPA sites, aggregate size average by year 
+#create data frames separating MPA sites and nonMPA sites
 
 class(lobster_size2$SIZE)
 
@@ -161,7 +183,96 @@ nonmpas_2017 <- lobster_size2 %>%
   mutate(i = row_number()) %>% 
   spread(SITE,SIZE) %>% 
   select(-i)
+```
 
+
+```{r}
+#create exploratory graphs 
+
+#MPAs, 2012 
+hist_mpa2012 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2012") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 5)+
+  facet_wrap(~SITE)
+
+hist_mpa2012
+ 
+
+qq_mpa2012 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2012") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+
+qq_mpa2012
+
+#IV does not look normally distributed in 2012
+#MPAS 2017
+
+hist_mpa2017 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2017") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 5)+
+  facet_wrap(~SITE)
+
+hist_mpa2017
+ 
+
+qq_mpa2017 <- lobster_size2 %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL", YEAR == "2017") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+
+qq_mpa2017
+
+
+#nonMPAS, 2012
+
+hist_nonmpa2012 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2012") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 10)+
+  facet_wrap(~SITE)
+
+hist_nonmpa2012
+
+
+qq_nonmpa2012 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2012") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+qq_nonmpa2012
+
+#nonMPAS2017
+
+
+hist_nonmpa2017 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2017") %>% 
+  ggplot(aes(x=SIZE))+
+  geom_histogram(bins = 10)+
+  facet_wrap(~SITE)
+
+hist_nonmpa2017
+
+
+qq_nonmpa2017 <- lobster_size2 %>% 
+  filter(SITE == "AQUE" | SITE == "MOHK" | SITE == "CARP", YEAR == "2017") %>% 
+  ggplot(aes(sample=SIZE))+
+  geom_qq()+
+  facet_wrap(~SITE)
+
+qq_nonmpa2017
+
+```
+
+
+
+
+
+```{r}
 #First Location: IV MPA
 #Test variances to determine what kind of t.test we can use
 
@@ -173,6 +284,19 @@ ftest_iv
 ttest_iv <- t.test(mpas_2012$IVEE,mpas_2017$IVEE, var.equal = TRUE)
 ttest_iv
 
+#Siglevel = 0.05, no significant difference 
+
+#calculate effect size using Cohen's D
+
+effsize_iv <- cohen.d(mpas_2012$IVEE,mpas_2017$IVEE)
+effsize_iv
+
+
+#Experiment: try Mann Whitney U since data did not appear normal
+
+```
+
+```{r}
 #Second Location: Naples MPA
 #Test Variances
 
@@ -183,6 +307,14 @@ ftest_naples
 ttest_naples <- t.test(mpas_2012$NAPL,mpas_2017$NAPL, var.equal = TRUE)
 ttest_naples
 
+#No significant difference
+#Cohen's d for effect size
+effsize_naples <- cohen.d(mpas_2017$NAPL,mpas_2012$NAPL)
+effsize_naples
+
+```
+
+```{r}
 #Third Location: Carpinteria Non-MPA
 #F test
 
@@ -194,7 +326,9 @@ ttest_carp <- t.test(nonmpas_2012$CARP,nonmpas_2017$CARP, var.equal = TRUE)
 ttest_carp
 
 
+```
 
+```{r}
 #Fourth Location: Arroyo Quemado 
 #F Test
 
@@ -207,7 +341,9 @@ ttest_aque <- t.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE, var.equal = TRUE)
 ttest_aque
 
 
+```
 
+```{r}
 #Fifth Location: Mohawk Reef
 #FTest
 
@@ -219,8 +355,13 @@ ftest_mohk
 ttest_mohk <- t.test(nonmpas_2012$MOHK,nonmpas_2017$MOHK, var.equal = TRUE)
 ttest_mohk
 
+#Only IV and Mohawk Reef showed a significant difference in lobster size between 2012 and 2017. 
 
+#make table with site rows, each year, traps 
 ```
+
+
+
 
 4. Proportions of legal lobsters
 ```{r}
