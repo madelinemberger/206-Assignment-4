@@ -319,6 +319,10 @@ effsize_iv
 
 #Experiment: try Mann Whitney U since data did not appear normal
 
+wilcox.test(mpas_2012$IVEE,mpas_2017$IVEE)
+
+#Result: Ranks are not equal...this is not the same as the t.test 
+
 ```
 
 ```{r}
@@ -336,6 +340,10 @@ ttest_naples
 #Cohen's d for effect size
 effsize_naples <- cohen.d(mpas_2017$NAPL,mpas_2012$NAPL)
 effsize_naples
+
+#Experiment: Mann Whitney U 
+
+wilcox.test(mpas_2012$NAPL,mpas_2017$NAPL)
 
 ```
 
@@ -365,6 +373,11 @@ ftest_aque
 ttest_aque <- t.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE, var.equal = TRUE)
 ttest_aque
 
+#Experiment: try Mann Whitney U
+
+wilcox.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE)
+
+#Result: There is no significant differnce in rank 
 
 ```
 
@@ -385,6 +398,9 @@ ttest_mohk
 #make table with site rows, each year, traps 
 ```
 
+```{r}
+#Summary tables 
+```
 
 
 
