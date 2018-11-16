@@ -304,7 +304,60 @@ qq_nonmpa2017
 
 ```
 
+```{r}
+#Make 10 vectors to use for effectsize
 
+#IV
+iv2012 <- lobster_size2 %>% 
+  filter(SITE == "IVEE", YEAR == "2012") %>% 
+  pull(SIZE)
+
+iv2017 <- lobster_size2 %>% 
+  filter(SITE == "IVEE", YEAR == "2017") %>% 
+  pull(SIZE)
+
+#Naples
+
+napl2012 <- lobster_size2 %>% 
+  filter(SITE == "NAPL", YEAR == "2012") %>% 
+  pull(SIZE)
+
+napl2017 <- lobster_size2 %>% 
+  filter(SITE == "NAPL", YEAR == "2017") %>% 
+  pull(SIZE)
+
+#Carpinteria 
+
+carp2012 <- lobster_size2 %>% 
+  filter(SITE == "CARP", YEAR == "2012") %>% 
+  pull(SIZE)
+
+carp2017 <- lobster_size2 %>% 
+  filter(SITE == "CARP", YEAR == "2017") %>% 
+  pull(SIZE)
+
+#Arroyo Quemado
+
+aque2012 <- lobster_size2 %>% 
+  filter(SITE == "AQUE", YEAR == "2012") %>% 
+  pull(SIZE)
+
+aque2017 <- lobster_size2 %>% 
+  filter(SITE == "AQUE", YEAR == "2017") %>% 
+  pull(SIZE)
+
+
+
+#Mohawk
+
+mohk2012 <- lobster_size2 %>% 
+  filter(SITE == "MOHK", YEAR == "2012") %>% 
+  pull(SIZE)
+
+mohk2017 <- lobster_size2 %>% 
+  filter(SITE == "MOHK", YEAR == "2017") %>% 
+  pull(SIZE)
+```
 
 
 
@@ -324,7 +377,7 @@ ttest_iv
 
 #calculate effect size using Cohen's D
 
-effsize_iv <- cohen.d(mpas_2012$IVEE,mpas_2017$IVEE)
+effsize_iv <- cohen.d(iv2012,iv2017)
 effsize_iv
 
 
@@ -345,7 +398,7 @@ ttest_naples
 
 #No significant difference
 #Cohen's d for effect size
-effsize_naples <- cohen.d(mpas_2017$NAPL,mpas_2012$NAPL)
+effsize_naples <- cohen.d(napl2012,napl2017)
 effsize_naples
 
 ```
@@ -362,6 +415,11 @@ ttest_carp <- t.test(nonmpas_2012$CARP,nonmpas_2017$CARP, var.equal = TRUE)
 ttest_carp
 
 
+#Cohen's d for effect size
+effsize_carp <- cohen.d(carp2012,carp2017)
+effsize_carp
+
+
 ```
 
 ```{r, echo=FALSE}
@@ -376,6 +434,9 @@ ftest_aque
 ttest_aque <- t.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE, var.equal = TRUE)
 ttest_aque
 
+#Cohen's d for effect size
+effsize_aque <- cohen.d(aque2012,aque2017)
+effsize_aque
 
 ```
 
@@ -391,7 +452,11 @@ ftest_mohk
 ttest_mohk <- t.test(nonmpas_2012$MOHK,nonmpas_2017$MOHK, var.equal = TRUE)
 ttest_mohk
 
-#Only IV and Mohawk Reef showed a significant difference in lobster size between 2012 and 2017. 
+
+#Cohen's d for effect size
+effsize_mohk <- cohen.d(mohk2012,mohk2017)
+effsize_mohk
+
 
 #make table with site rows, each year, traps 
 ```
