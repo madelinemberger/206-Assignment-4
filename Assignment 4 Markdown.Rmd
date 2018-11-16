@@ -466,28 +466,21 @@ effsize_mohk
 ```
 
 ```{r}
-#Summary Table
-
-#for 2012 averages
-size_summary_table2012 <- lobster_size2 %>% 
-  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2012") %>%
-  group_by(SITE) %>% 
+#Summary Table of  averages
+size_summary_table <- lobster_size2 %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2012" | YEAR == "2017") %>%
+  group_by(SITE,YEAR) %>% 
   summarize(
-    avg_2012 = mean(SIZE)
-  )
+    avg = mean(SIZE)
+  ) %>% 
+  mutate(i = row_number()) %>% 
+  spread(YEAR,avg) %>% 
+  select(-i)
   
-size_summary_table2012
+  
+size_summary_table
   
 
-#for 2017 averages
-size_summary_table2017 <- lobster_size2 %>% 
-  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2017") %>%
-  group_by(SITE) %>% 
-  summarize(
-    avg_2017 = mean(SIZE)
-  )
-
-size_summary_table2017
 
 
 
@@ -497,6 +490,7 @@ size_summary_table2017
 
 4. Proportions of legal lobsters
 ```{r, echo=FALSE}
+#New Pretty Table for display in report
 sample_number <- c(67, 705, 606, 178, 112)
 
 carapace <- lobster_size2 %>% 
@@ -540,8 +534,6 @@ total <- lobster_size2 %>%
   summarize(
     arr = length(SIZE)
   )
-
-total
 
 
 
