@@ -508,7 +508,7 @@ rownames(carapace) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk",
 carapace_table2 <- kable(carapace, col.names = c("Illegal Size","Legal Size", "Proportion Legal"), align = "c") %>% 
   kable_styling(bootstrap_options = "striped", full_width = F)
 
-carapace_table2
+carapace_table2 
 
 
 carapace2 <- lobster_size2 %>% 
