@@ -465,8 +465,8 @@ effsize_mohk
 #make table with site rows, each year, traps 
 ```
 
-```{r}
-#Summary Table of  averages
+```{r, include = FALSE}
+#Summary Table of  average sizes
 size_summary_table <- lobster_size2 %>% 
   filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2012" | YEAR == "2017") %>%
   group_by(SITE,YEAR) %>% 
@@ -476,13 +476,25 @@ size_summary_table <- lobster_size2 %>%
   mutate(i = row_number()) %>% 
   spread(YEAR,avg) %>% 
   select(-i)
-  mutate(Difference =  )
+
   
   
 size_summary_table
+
+
+#Summary table of traps per year 
   
+traps_summary_table <- traps_summary %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2012" | YEAR == "2017") %>%
+  group_by(SITE, YEAR) %>% 
+  summarize(
+    avg = mean(traps)
+  ) %>% 
+  mutate(i = row_number()) %>% 
+  spread(YEAR,avg) %>% 
+  select(-i)
 
-
+traps_summary_table
 
 
 ```
