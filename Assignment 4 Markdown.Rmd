@@ -17,15 +17,18 @@ library(RColorBrewer)
 library(car)
 library(effsize)
 library(kableExtra)
+library(formattable)
+
 ```
 
 Read in the CSVs
 
-```{r, echo=FALSE}
+```{r, include = FALSE}
 
 
 lobster_size <- read_csv("lobster_size_abundance.csv")
 lobster_traps <- read_csv("lobster_traps.csv")
+avg_size_traps <- read_csv("avg_size_traps .csv")
 ```
 
 The lobster_size file needs to be converted to tidyverse format
@@ -142,7 +145,7 @@ abundance_traps_graph
 
 2. ANOVA
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, results = FALSE}
 
 # Compare mean lobster sizes (mm) across five sites for lobster observations collected in 2017
 
@@ -184,7 +187,7 @@ lob_ANOVA
 
 3. Differences in lobster size between MPAs and nonMPAS in 2012 and 2017  
 
-```{r, echo=FALSE}
+```{r, include = FALSE}
 #3: Comparing MPAs v non MPAs between 2012 and 2017 
 
 
@@ -219,7 +222,7 @@ nonmpas_2017 <- lobster_size2 %>%
 ```
 
 
-```{r, echo=FALSE}
+```{r, include = FALSE}
 #create exploratory graphs 
 
 #MPAs, 2012 
@@ -301,7 +304,7 @@ qq_nonmpa2017
 
 ```
 
-```{r}
+```{r, echo = FALSE}
 #Make 10 vectors to use for effectsize
 
 #IV
@@ -358,7 +361,7 @@ mohk2017 <- lobster_size2 %>%
 
 
 
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 #First Location: IV MPA
 #Test variances to determine what kind of t.test we can use
 
@@ -495,6 +498,27 @@ traps_summary_table <- traps_summary %>%
   select(-i)
 
 traps_summary_table
+
+```
+
+```{r, echo = FALSE}
+
+
+size_traps_summary <- avg_size_traps %>% 
+  mutate(size_difference = round(size_2017-size_2012,2)) %>% 
+  mutate(traps_difference = traps_2017-traps_2012) %>% 
+  select(-Site) %>% 
+  select(-traps_2017, -traps_2012) %>% 
+  rename("Size in 2012" = size_2012, "Size in 2017" = size_2017, "Change in Size" = size_difference, "Change in Traps" = traps_difference)
+
+
+
+rownames(size_traps_summary) <- c("Isla Vista","Naples Reef", "Arroyo Quemado", "Carpinteria","Mohawk Reef")
+
+
+formattable(size_traps_summary, list(`Change in Size`= formatter("span", style = x ~ style(color = ifelse(x > 0, "green", ifelse(x < 0, "red", "black"))))))
+
+
 
 
 ```
