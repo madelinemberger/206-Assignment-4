@@ -145,11 +145,14 @@ abundance_traps_graph
 
 2. ANOVA
 
-```{r, echo=FALSE, results = FALSE}
+```{r}
 
 # Compare mean lobster sizes (mm) across five sites for lobster observations collected in 2017
 
-lobster_levene <- leveneTest(SIZE ~ SITE, data = lobster_size2)
+lobster_size3 <- lobster_size2 %>% 
+  filter(YEAR == 2017)
+
+lobster_levene <- leveneTest(SIZE ~ SITE, data = lobster_size3)
 
 lobster_levene
 
@@ -162,7 +165,7 @@ lobster_levene
 # H0: Mean lobster size at the five sites are equal
 # HA: At least two means differ significantly
 
-lobster_aov <- aov(SIZE ~ SITE, data = lobster_size2)
+lobster_aov <- aov(SIZE ~ SITE, data = lobster_size3)
 
 summary(lobster_aov)
 
@@ -172,14 +175,62 @@ lob_ph<- TukeyHSD(lobster_aov)
 
 lob_ph
 
-lob_ANOVA <- ggplot(lobster_size2, aes(x = SITE, y = SIZE)) +
-  geom_boxplot(aes(color = SITE)) +
-  xlab("Site") +
-  ylab("Size (mm)") +
-  theme_bw()
- 
+# Boxplot graph ANOVA
 
+lob_ANOVA <- ggplot(lobster_size3, aes(x = SITE, y = SIZE)) +
+  geom_boxplot(fill = "gray", color = "blue") +
+  theme_bw() +
+  annotate("text", x = 1, y = 130, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 2, y = 130, label = "a", family = "Times New Roman") +
+  annotate("text", x = 3, y = 130, label = "a", family = "Times New Roman") +
+  annotate("text", x = 4, y = 130, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 5, y = 130, label = "b", family = "Times New Roman") +
+  xlab("\nSite")+
+  ylab("Mean lobster size (mm)") +
+  scale_y_continuous(lim = c(0, 160), expand = c(0,0)) +
+  scale_x_discrete(labels = c("AQUE" = "AQUE\nn=67",
+                              "CARP" = "CARP\nn=705",
+                              "IVEE" = "IVEE\nn=606",
+                              "MOHK" = "MOHK\nn=178",
+                              "NAPL" = "NAPL\nn=112"
+                                ))
+ 
 lob_ANOVA
+
+# Data preparation for column graph ANOVA 
+
+lob_col_data <- lobster_size3 %>%
+  group_by(SITE) %>%
+  summarize(
+    mean = mean(SIZE),
+    sd = sd(SIZE),
+    length = length(SIZE)
+  )
+
+# Column graph ANOVA
+
+lob_col_data
+
+lob_col <- ggplot(lob_col_data, aes(x = SITE, y = mean)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd), width = .2) +
+  theme_bw() +
+  annotate("text", x = 1, y = 90, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 2, y = 89, label = "a", family = "Times New Roman") +
+  annotate("text", x = 3, y = 89, label = "a", family = "Times New Roman") +
+  annotate("text", x = 4, y = 85, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 5, y = 91, label = "b", family = "Times New Roman") +
+  xlab("\nSite") +
+  ylab("Mean lobster size (mm)") +
+  scale_y_continuous(lim = c(0, 100), expand = c(0,0)) +
+  scale_x_discrete(labels = c("AQUE" = "AQUE\nn=67",
+                              "CARP" = "CARP\nn=705",
+                              "IVEE" = "IVEE\nn=606",
+                              "MOHK" = "MOHK\nn=178",
+                              "NAPL" = "NAPL\nn=112"
+                                ))
+
+lob_col
 
 ```
 
