@@ -517,10 +517,9 @@ carapace2 <- lobster_size2 %>%
   mutate(Legality = ifelse(SIZE >= 86, "Legal", "Illegal")) %>% 
   count(SITE, Legality) %>% 
   spread(Legality, n) %>% 
-  select(-SITE) %>% 
-  mutate(Sample_Size = sample_number)
+  select(-SITE)
   
-rownames(carapace) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk", "Naples")
+rownames(carapace2) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk", "Naples")
 
 ```
 
@@ -561,9 +560,9 @@ carapace_prop_table
 Chi-square test
 
 ```{r, echo=FALSE}
-carapace_x2 <- chisq.test(carapace)
+carapace_x2 <- chisq.test(carapace2)
 carapace_x2
 
 
 ```
-The proportion of observed lobsters that were above the legal minimum did not differ signficantly across all sites ($\chi^2$(`r carapace_x2$parameter`) = `r round(carapace_x2$statistic, 2)`, p value < 0.001).
+The proportion of observed lobsters that were above the legal minimum differed signficantly across all sites ($\chi^2$(`r carapace_x2$parameter`) = `r round(carapace_x2$statistic, 2)`, p value < 0.001).
