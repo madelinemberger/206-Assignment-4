@@ -42,6 +42,8 @@ lobster_size2 <- expand.dft(lobster_size1, freq = "COUNT") %>%
 
 ```
 
+**Figure 1. Amount of trap buoys at five research sites.**
+
 ```{r, echo=FALSE, message = FALSE}
 
 #Data wrangling into tables and exploratory graphs
@@ -73,7 +75,11 @@ trap_plot <- lobster_traps %>%
   count(SITE, YEAR) %>% 
   ggplot(aes(x = YEAR, y = n)) +
   geom_line(aes(color=SITE)) +
-  theme_classic()
+  theme_classic() +
+  xlab("Year") +
+  ylab("Traps") +
+  ggtitle("Amount of traps (2012-2017)")
+
 
 
 trap_plot
@@ -87,7 +93,13 @@ trap_plot
 together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR")) %>% 
   ggplot(aes(x=traps, y=abundance)) +
   geom_col(aes(fill=SITE))+
-  facet_wrap(~SITE, scale = "free")
+  facet_wrap(~SITE, scale = "free") +
+  ggtitle("Amount of traps at each site (2012-2017)") +
+  labs(
+    x = "Year",
+    y = "Traps"
+  ) +
+  scale_y_continuous(expand = c(0,0))
 
 together
 
@@ -101,9 +113,10 @@ trap_plot <- lobster_traps %>%
   geom_line(aes(color=SITE)) +
   theme_classic() +
   scale_x_continuous(expand=c(0,0)) +
+  ggtitle("Amount of traps at each site (2012-2017)") +
   labs(
     x = "Year",
-    y = "Number of Traps"
+    y = "Traps"
   )
 
 trap_plot
@@ -118,9 +131,10 @@ abundance_plot <- lobster_size %>%
   geom_line(aes(color=SITE)) +
   theme_classic() +
   scale_x_continuous(expand=c(0,0)) +
+  ggtitle("Abundance of lobsters at each site (2012-2017)") +
   labs(
     x = "Year",
-    y = "Lobster Abundance"
+    y = "Lobsters"
   )
 
 abundance_plot
@@ -131,9 +145,17 @@ abundance_traps <- full_join(traps_summary, lobster_abundance)
 
 #use new merged data to make side by side line graphs 
 abundance_traps_graph <- ggplot(abundance_traps, aes(YEAR))+
-  geom_line(aes(y=traps, color="traps"))+
-  geom_line(aes(y=abundance, color="abundance"))+
-  facet_wrap(~SITE)
+  geom_line(aes(y=traps, color="Traps"))+
+  geom_line(aes(y=abundance, color="Lobsters"))+
+  facet_wrap(~SITE, scale = "free") +
+  ggtitle("Amount of traps and lobsters at each site (2012-2017)") +
+  labs(
+    x = "Year",
+    y = "Amount"
+  ) +
+  scale_y_continuous(expand = c(0,0)) +
+  theme(axis.text.x = element_text(angle = 90))
+
 
 
 abundance_traps_graph
@@ -145,7 +167,7 @@ abundance_traps_graph
 
 2. ANOVA
 
-**Figure 2. Lobster size at five research sites in 2017.**
+**Figure 3. Lobster size at five research sites (2017).**
 
 ```{r, echo = FALSE}
 
