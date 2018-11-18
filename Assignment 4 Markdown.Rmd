@@ -292,6 +292,8 @@ sample_sizes2012
 ```
 
 
+
+
 ```{r, include = FALSE}
 #create exploratory graphs 
 
@@ -429,6 +431,86 @@ mohk2017 <- lobster_size2 %>%
   pull(SIZE)
 ```
 
+```{r, include = FALSE}
+#create values of mean and sd
+
+#IV
+mean_iv12<- mean(iv2012)
+mean_iv12
+
+sd_iv12 <- sd(iv2012)
+sd_iv12
+
+
+mean_iv17<- mean(iv2017)
+mean_iv17
+
+sd_iv17 <- sd(iv2017)
+sd_iv17
+
+#Naples
+
+mean_napl12<- mean(napl2012)
+mean_napl12
+
+sd_napl12 <- sd(napl2012)
+sd_napl12
+
+
+mean_napl17<- mean(napl2017)
+mean_napl17
+
+sd_napl17 <- sd(napl2017)
+sd_napl17
+
+
+#Arroyo Quemado
+
+mean_aque12<- mean(aque2012)
+mean_aque12
+
+sd_aque12 <- sd(aque2012)
+sd_aque12
+
+
+mean_aque17<- mean(aque2017)
+mean_aque17
+
+sd_aque17 <- sd(aque2017)
+sd_aque17
+
+
+#Carpinteria
+
+mean_carp12<- mean(carp2012)
+mean_carp12
+
+sd_carp12 <- sd(carp2012)
+sd_carp12
+
+
+mean_carp17<- mean(carp2017)
+mean_carp17
+
+sd_carp17 <- sd(carp2017)
+sd_carp17
+
+#Mohawk
+
+mean_mohk12<- mean(mohk2012)
+mean_mohk12
+
+sd_mohk12 <- sd(mohk2012)
+sd_mohk12
+
+
+mean_mohk17<- mean(mohk2017)
+mean_mohk17
+
+sd_mohk17 <- sd(mohk2017)
+sd_mohk17
+```
+
 
 
 ```{r, echo = FALSE, results = FALSE}
@@ -455,7 +537,6 @@ effsize_iv
 
 manu_iv <- wilcox.test(mpas_2012$IVEE,mpas_2017$IVEE)
 manu_iv
-
 ```
 
 Average lobster size at Isla Vista Reef in 2012 (n = 26) and 2017 (n = 606) did not differed significantly (t{630} = `r {round(ttest_iv$statistic,2)}`, p = `r {round(ttest_iv$p.value,3)}`, $\alpha$ = 0.05). To futher examine the difference between the two years, we calculated the effect size using Cohen's D. The result, `r {round(effsize_iv$estimate,2)}`, indicates a small effect size, and the aboslute difference in mean size between the two years was??. 
