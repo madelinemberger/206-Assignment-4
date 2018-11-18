@@ -17,15 +17,18 @@ library(RColorBrewer)
 library(car)
 library(effsize)
 library(kableExtra)
+library(formattable)
+
 ```
 
 Read in the CSVs
 
-```{r, echo=FALSE}
+```{r, include = FALSE}
 
 
 lobster_size <- read_csv("lobster_size_abundance.csv")
 lobster_traps <- read_csv("lobster_traps.csv")
+avg_size_traps <- read_csv("avg_size_traps .csv")
 ```
 
 The lobster_size file needs to be converted to tidyverse format
@@ -39,7 +42,7 @@ lobster_size2 <- expand.dft(lobster_size1, freq = "COUNT") %>%
 
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message = FALSE}
 
 #Data wrangling into tables and exploratory graphs
 
@@ -78,7 +81,7 @@ trap_plot
 ```
 
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message = FALSE}
 
 #merge cleaned size and abundance data, graph by site
 together <- merge(lobster_traps_clean,lobster_abundance, by = c("SITE", "YEAR")) %>% 
@@ -142,11 +145,14 @@ abundance_traps_graph
 
 2. ANOVA
 
-```{r, echo=FALSE}
+```{r}
 
 # Compare mean lobster sizes (mm) across five sites for lobster observations collected in 2017
 
-lobster_levene <- leveneTest(SIZE ~ SITE, data = lobster_size2)
+lobster_size3 <- lobster_size2 %>% 
+  filter(YEAR == 2017)
+
+lobster_levene <- leveneTest(SIZE ~ SITE, data = lobster_size3)
 
 lobster_levene
 
@@ -159,7 +165,7 @@ lobster_levene
 # H0: Mean lobster size at the five sites are equal
 # HA: At least two means differ significantly
 
-lobster_aov <- aov(SIZE ~ SITE, data = lobster_size2)
+lobster_aov <- aov(SIZE ~ SITE, data = lobster_size3)
 
 summary(lobster_aov)
 
@@ -169,14 +175,62 @@ lob_ph<- TukeyHSD(lobster_aov)
 
 lob_ph
 
-lob_ANOVA <- ggplot(lobster_size2, aes(x = SITE, y = SIZE)) +
-  geom_boxplot(fill = "gray", color = "blue") +
-  xlab("Site") +
-  ylab("Size") +
-  theme_bw()
- 
+# Boxplot graph ANOVA
 
+lob_ANOVA <- ggplot(lobster_size3, aes(x = SITE, y = SIZE)) +
+  geom_boxplot(fill = "gray", color = "blue") +
+  theme_bw() +
+  annotate("text", x = 1, y = 130, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 2, y = 130, label = "a", family = "Times New Roman") +
+  annotate("text", x = 3, y = 130, label = "a", family = "Times New Roman") +
+  annotate("text", x = 4, y = 130, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 5, y = 130, label = "b", family = "Times New Roman") +
+  xlab("\nSite")+
+  ylab("Mean lobster size (mm)") +
+  scale_y_continuous(lim = c(0, 160), expand = c(0,0)) +
+  scale_x_discrete(labels = c("AQUE" = "AQUE\nn=67",
+                              "CARP" = "CARP\nn=705",
+                              "IVEE" = "IVEE\nn=606",
+                              "MOHK" = "MOHK\nn=178",
+                              "NAPL" = "NAPL\nn=112"
+                                ))
+ 
 lob_ANOVA
+
+# Data preparation for column graph ANOVA 
+
+lob_col_data <- lobster_size3 %>%
+  group_by(SITE) %>%
+  summarize(
+    mean = mean(SIZE),
+    sd = sd(SIZE),
+    length = length(SIZE)
+  )
+
+# Column graph ANOVA
+
+lob_col_data
+
+lob_col <- ggplot(lob_col_data, aes(x = SITE, y = mean)) +
+  geom_col() +
+  geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd), width = .2) +
+  theme_bw() +
+  annotate("text", x = 1, y = 90, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 2, y = 89, label = "a", family = "Times New Roman") +
+  annotate("text", x = 3, y = 89, label = "a", family = "Times New Roman") +
+  annotate("text", x = 4, y = 85, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 5, y = 91, label = "b", family = "Times New Roman") +
+  xlab("\nSite") +
+  ylab("Mean lobster size (mm)") +
+  scale_y_continuous(lim = c(0, 100), expand = c(0,0)) +
+  scale_x_discrete(labels = c("AQUE" = "AQUE\nn=67",
+                              "CARP" = "CARP\nn=705",
+                              "IVEE" = "IVEE\nn=606",
+                              "MOHK" = "MOHK\nn=178",
+                              "NAPL" = "NAPL\nn=112"
+                                ))
+
+lob_col
 
 ```
 
@@ -184,7 +238,7 @@ lob_ANOVA
 
 3. Differences in lobster size between MPAs and nonMPAS in 2012 and 2017  
 
-```{r, echo=FALSE}
+```{r, echo = FALSE}
 #3: Comparing MPAs v non MPAs between 2012 and 2017 
 
 
@@ -216,10 +270,29 @@ nonmpas_2017 <- lobster_size2 %>%
   mutate(i = row_number()) %>% 
   spread(SITE,SIZE) %>% 
   select(-i)
+
+
+sample_sizes2017 <- lobster_size %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK" | SITE =="IVEE"| SITE == "NAPL", YEAR == "2017") %>% 
+  group_by(SITE) %>% 
+  summarize(
+    sizes2017 = length(SIZE)
+  )
+
+sample_sizes2017
+
+sample_sizes2012 <- lobster_size %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK" | SITE =="IVEE"| SITE == "NAPL", YEAR == "2012") %>% 
+  group_by(SITE) %>% 
+  summarize(
+    sizes2012 = length(SIZE)
+  )
+
+sample_sizes2012
 ```
 
 
-```{r, echo=FALSE}
+```{r, include = FALSE}
 #create exploratory graphs 
 
 #MPAs, 2012 
@@ -301,7 +374,7 @@ qq_nonmpa2017
 
 ```
 
-```{r}
+```{r, echo = FALSE}
 #Make 10 vectors to use for effectsize
 
 #IV
@@ -358,7 +431,7 @@ mohk2017 <- lobster_size2 %>%
 
 
 
-```{r, echo=FALSE}
+```{r, echo = FALSE, results = FALSE}
 #First Location: IV MPA
 #Test variances to determine what kind of t.test we can use
 
@@ -380,9 +453,16 @@ effsize_iv
 
 #Experiment: try Mann Whitney U since data did not appear normal
 
+manu_iv <- wilcox.test(mpas_2012$IVEE,mpas_2017$IVEE)
+manu_iv
+
 ```
 
-```{r, echo=FALSE}
+Average lobster size at Isla Vista Reef in 2012 (n = 26) and 2017 (n = 606) did not differed significantly (t{630} = `r {round(ttest_iv$statistic,2)}`, p = `r {round(ttest_iv$p.value,3)}`, $\alpha$ = 0.05). To futher examine the difference between the two years, we calculated the effect size using Cohen's D. The result, `r {round(effsize_iv$estimate,2)}`, indicates a small effect size, and the aboslute difference in mean size between the two years was??. 
+
+
+
+```{r, echo=FALSE, results = FALSE}
 #Second Location: Naples MPA
 #Test Variances
 
@@ -400,7 +480,12 @@ effsize_naples
 
 ```
 
-```{r, echo=FALSE}
+
+
+Average lobster size at Naples Reef MPA in 2012 (n = 6) and 2017 (n = 112) did not differed significantly (t{5} = `r {round(ttest_naples$statistic,2)}`, p = `r {round(ttest_naples$p.value,3)}`, $\alpha$ = 0.05). To futher examine the difference between the two years, we calculated the effect size using Cohen's D. The result, `r {round(effsize_naples$estimate,2)}`, indicates a small effect size, and the aboslute difference in mean size between the two years was....
+
+
+```{r, echo=FALSE, results = FALSE}
 #Third Location: Carpinteria Non-MPA
 #F test
 
@@ -419,7 +504,12 @@ effsize_carp
 
 ```
 
-```{r, echo=FALSE}
+Average lobster size at the Carpinteria site in 2012 (n = 78) and 2017 (n = 704 ) did not differ significantly (t{5} = `r {round(ttest_carp$statistic,2)}`, p = `r {round(ttest_carp$p.value,3)}`, $\alpha$ = 0.05). To futher examine the difference between the two years, we calculated the effect size using Cohen's D. The result, `r {round(effsize_carp$estimate,2)}`, indicates an extremely small effect size, and the aboslute difference in mean size between the two years was....
+
+
+
+
+```{r, echo=FALSE, results = FALSE}
 #Fourth Location: Arroyo Quemado 
 #F Test
 
@@ -435,9 +525,17 @@ ttest_aque
 effsize_aque <- cohen.d(aque2012,aque2017)
 effsize_aque
 
+#Mann Whitney U
+manu_aque <- wilcox.test(nonmpas_2012$AQUE,nonmpas_2017$AQUE)
+manu_aque
+
 ```
 
-```{r, echo=FALSE}
+
+Average lobster size at Arroyo Quemado Reef in 2012 (n = 38) and 2017 (n = 67 ) did not differ significantly (t{5} = `r {round(ttest_aque$statistic,2)}`, p = `r {round(ttest_aque$p.value,3)}`, $\alpha$ = 0.05). To futher examine the difference between the two years, we calculated the effect size using Cohen's D. The result, `r {round(effsize_aque$estimate,2)}`, indicates a small effect size, and the aboslute difference in mean size between the two years was....
+
+
+```{r, include = FALSE}
 #Fifth Location: Mohawk Reef
 #FTest
 
@@ -458,29 +556,60 @@ effsize_mohk
 #make table with site rows, each year, traps 
 ```
 
-```{r}
-#Summary Table
+Average lobster size at Mohawk Reef in 2012 (n = 82) and 2017 (n = 177) did differ significantly (t{5} = `r {round(ttest_mohk$statistic,2)}`, p = `r {round(ttest_mohk$p.value,3)}`, $\alpha$ = 0.05). To futher examine the difference between the two years, we calculated the effect size using Cohen's D. The result, `r {round(effsize_mohk$estimate,2)}`, indicates a medium effect size, and the aboslute difference in mean size between the two years was....
 
-#for 2012 averages
-size_summary_table2012 <- lobster_size2 %>% 
-  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2012") %>%
-  group_by(SITE) %>% 
+
+
+```{r, include = FALSE}
+#Summary Table of  average sizes
+size_summary_table <- lobster_size2 %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2012" | YEAR == "2017") %>%
+  group_by(SITE,YEAR) %>% 
   summarize(
-    avg_2012 = mean(SIZE)
-  )
-  
-size_summary_table2012
-  
+    avg = mean(SIZE)
+  ) %>% 
+  mutate(i = row_number()) %>% 
+  spread(YEAR,avg) %>% 
+  select(-i)
 
-#for 2017 averages
-size_summary_table2017 <- lobster_size2 %>% 
-  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2017") %>%
-  group_by(SITE) %>% 
+  
+  
+size_summary_table
+
+
+#Summary table of traps per year 
+  
+traps_summary_table <- traps_summary %>% 
+  filter(SITE== "CARP" | SITE== "MOHK" | SITE== "AQUE" | SITE== "NAPL" | SITE== "IVEE", YEAR == "2012" | YEAR == "2017") %>%
+  group_by(SITE, YEAR) %>% 
   summarize(
-    avg_2017 = mean(SIZE)
-  )
+    avg = mean(traps)
+  ) %>% 
+  mutate(i = row_number()) %>% 
+  spread(YEAR,avg) %>% 
+  select(-i)
 
-size_summary_table2017
+traps_summary_table
+
+```
+
+```{r, echo = FALSE, message = FALSE}
+
+
+size_traps_summary <- avg_size_traps %>% 
+  mutate(size_difference = round(size_2017-size_2012,2)) %>% 
+  mutate(traps_difference = traps_2017-traps_2012) %>% 
+  select(-Site) %>% 
+  select(-traps_2017, -traps_2012) %>% 
+  rename("Size in 2012" = size_2012, "Size in 2017" = size_2017, "Change in Size" = size_difference, "Change in Traps" = traps_difference)
+
+
+
+rownames(size_traps_summary) <- c("Isla Vista","Naples Reef", "Arroyo Quemado", "Carpinteria","Mohawk Reef")
+
+
+formattable(size_traps_summary, list(`Change in Size`= formatter("span", style = x ~ style(color = ifelse(x > 0, "green", ifelse(x < 0, "red", "black"))))))
+
 
 
 
@@ -489,7 +618,8 @@ size_summary_table2017
 
 
 4. Proportions of legal lobsters
-```{r, echo=FALSE}
+```{r, echo=FALSE, message = FALSE}
+#New Pretty Table for display in report
 sample_number <- c(67, 705, 606, 178, 112)
 
 carapace <- lobster_size2 %>% 
@@ -524,23 +654,6 @@ rownames(carapace2) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk"
 ```
 
 
-```{r}
-
-total <- lobster_size2 %>% 
-  filter(YEAR == "2017") %>% 
-  group_by(SITE) %>% 
-  summarize(
-    arr = length(SIZE)
-  )
-
-total
-
-
-
-total_test <- lobster_size2 %>% 
-  filter(YEAR == "2017", SITE == "AQUE") 
-```
-
 
 Proprtions of legal groups and table of them:
 
@@ -559,6 +672,7 @@ carapace_prop_table
 
 Chi-square test
 
+<<<<<<< HEAD
 ```{r, echo=FALSE}
 carapace_x2 <- chisq.test(carapace2)
 carapace_x2
