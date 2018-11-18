@@ -145,7 +145,9 @@ abundance_traps_graph
 
 2. ANOVA
 
-```{r}
+**Figure 2. Lobster size at five research sites in 2017.**
+
+```{r, echo = FALSE}
 
 # Compare mean lobster sizes (mm) across five sites for lobster observations collected in 2017
 
@@ -153,8 +155,6 @@ lobster_size3 <- lobster_size2 %>%
   filter(YEAR == 2017)
 
 lobster_levene <- leveneTest(SIZE ~ SITE, data = lobster_size3)
-
-lobster_levene
 
 # Variances are not equal
 
@@ -167,25 +167,22 @@ lobster_levene
 
 lobster_aov <- aov(SIZE ~ SITE, data = lobster_size3)
 
-summary(lobster_aov)
-
 # At least two samples were taken from populations with different means. Which ones are different? All three different from each other? Or something else?
 
 lob_ph<- TukeyHSD(lobster_aov)
 
-lob_ph
-
 # Boxplot graph ANOVA
 
 lob_ANOVA <- ggplot(lobster_size3, aes(x = SITE, y = SIZE)) +
-  geom_boxplot(fill = "gray", color = "blue") +
+  geom_boxplot(fill = "gray") +
   theme_bw() +
-  annotate("text", x = 1, y = 130, label = "a,b", family = "Times New Roman") +
-  annotate("text", x = 2, y = 130, label = "a", family = "Times New Roman") +
-  annotate("text", x = 3, y = 130, label = "a", family = "Times New Roman") +
-  annotate("text", x = 4, y = 130, label = "a,b", family = "Times New Roman") +
-  annotate("text", x = 5, y = 130, label = "b", family = "Times New Roman") +
-  xlab("\nSite")+
+  ggtitle("Mean Lobster Size (mm)") +
+  annotate("text", x = 1, y = 110, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 2, y = 125, label = "a", family = "Times New Roman") +
+  annotate("text", x = 3, y = 156, label = "a", family = "Times New Roman") +
+  annotate("text", x = 4, y = 100, label = "a,b", family = "Times New Roman") +
+  annotate("text", x = 5, y = 115, label = "b", family = "Times New Roman") +
+  xlab("Site") +
   ylab("Mean lobster size (mm)") +
   scale_y_continuous(lim = c(0, 160), expand = c(0,0)) +
   scale_x_discrete(labels = c("AQUE" = "AQUE\nn=67",
@@ -209,18 +206,17 @@ lob_col_data <- lobster_size3 %>%
 
 # Column graph ANOVA
 
-lob_col_data
-
 lob_col <- ggplot(lob_col_data, aes(x = SITE, y = mean)) +
   geom_col() +
   geom_errorbar(aes(ymin = mean-sd, ymax = mean+sd), width = .2) +
   theme_bw() +
+  ggtitle("Mean Lobster Size (mm)") +
   annotate("text", x = 1, y = 90, label = "a,b", family = "Times New Roman") +
   annotate("text", x = 2, y = 89, label = "a", family = "Times New Roman") +
   annotate("text", x = 3, y = 89, label = "a", family = "Times New Roman") +
   annotate("text", x = 4, y = 85, label = "a,b", family = "Times New Roman") +
   annotate("text", x = 5, y = 91, label = "b", family = "Times New Roman") +
-  xlab("\nSite") +
+  xlab("Site") +
   ylab("Mean lobster size (mm)") +
   scale_y_continuous(lim = c(0, 100), expand = c(0,0)) +
   scale_x_discrete(labels = c("AQUE" = "AQUE\nn=67",
@@ -230,10 +226,10 @@ lob_col <- ggplot(lob_col_data, aes(x = SITE, y = mean)) +
                               "NAPL" = "NAPL\nn=112"
                                 ))
 
-lob_col
-
 ```
 
+
+Figure 2. In 2017, mean lobster carapace size (mm) differed significantly across the five sampled sites (by one-way ANOVA with Tukey's HSD, F(4, 1663) = 3.424, *p* < 0.001, with $\alpha$ = 0.05 throughout). Post-hoc analysis by Tukey's HSD revealed that mean lobster size at Naples Reef differed significantly from Carpinteria and Isla Vista (pairwise *p* < 0.001) and had the highest mean lobster size (76.23 mm). Meanwhile, mean lobster size at Arroyo Quemado and Mohawk were not significantly different from any of the other sites (pairwise *p* > 0.05).
 
 
 3. Differences in lobster size between MPAs and nonMPAS in 2012 and 2017  
