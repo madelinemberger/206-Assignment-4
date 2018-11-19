@@ -156,8 +156,6 @@ abundance_traps_graph <- ggplot(abundance_traps, aes(YEAR))+
   scale_y_continuous(expand = c(0,0)) +
   theme(axis.text.x = element_text(angle = 90))
 
-
-
 abundance_traps_graph
 
 
@@ -251,7 +249,7 @@ lob_col <- ggplot(lob_col_data, aes(x = SITE, y = mean)) +
 ```
 
 
-Figure 2. In 2017, mean lobster carapace size (mm) differed significantly across the five sampled sites (by one-way ANOVA with Tukey's HSD, F(4, 1663) = 3.424, *p* < 0.001, with $\alpha$ = 0.05 throughout). Post-hoc analysis by Tukey's HSD revealed that mean lobster size at Naples Reef differed significantly from Carpinteria and Isla Vista (pairwise *p* < 0.001) and had the highest mean lobster size (76.23 mm). Meanwhile, mean lobster size at Arroyo Quemado and Mohawk were not significantly different from any of the other sites (pairwise *p* > 0.05).
+**Figure 2. Mean lobster size (mm).** In 2017, mean lobster carapace size (mm) differed significantly across the five sampled sites (by one-way ANOVA with Tukey's HSD, F(4, 1663) = 3.424, *p* < 0.001, with $\alpha$ = 0.05 throughout). Post-hoc analysis by Tukey's HSD revealed that mean lobster size at Naples Reef differed significantly from Carpinteria and Isla Vista (pairwise *p* < 0.001) and had the highest mean lobster size (76.23 mm). Meanwhile, mean lobster size at Arroyo Quemado and Mohawk were not significantly different from any of the other sites (pairwise *p* > 0.05).
 
 
 3. Differences in lobster size between MPAs and nonMPAS in 2012 and 2017  
